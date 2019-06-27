@@ -12,17 +12,18 @@
 //1 LU
 //2 LD
 //3 LE
-//5 RESET
+//4 RU
+//5 RD
+//6 RE
+//7 ST
 
-#define BTN_PIN_1 D7
-#define BTN_PIN_2 D5
-#define BTN_PIN_3 D6
-//#define BTN_PIN_1 D2
-//#define BTN_PIN_2 D1
-//#define BTN_PIN_3 D4
-#define BTN_PIN_4 D2
-
-#define BTN_PIN_5 D3
+#define BTN_PIN_1 D2
+#define BTN_PIN_2 D1
+#define BTN_PIN_3 D4
+#define BTN_PIN_4 D7
+#define BTN_PIN_5 D5
+#define BTN_PIN_6 D6
+#define BTN_PIN_7 D3
 
 #define LED_PIN D0
 
@@ -71,6 +72,8 @@ void setup() {
   pinMode(BTN_PIN_3, INPUT_PULLUP);
   pinMode(BTN_PIN_4, INPUT_PULLUP);
   pinMode(BTN_PIN_5, INPUT_PULLUP);
+  pinMode(BTN_PIN_6, INPUT_PULLUP);
+  pinMode(BTN_PIN_7, INPUT_PULLUP);
   pinMode(LED_PIN, OUTPUT);
   
   attachInterrupt(digitalPinToInterrupt(BTN_PIN_1), interrHandler1, FALLING);
@@ -78,6 +81,8 @@ void setup() {
   attachInterrupt(digitalPinToInterrupt(BTN_PIN_3), interrHandler3, FALLING);
   attachInterrupt(digitalPinToInterrupt(BTN_PIN_4), interrHandler4, FALLING);
   attachInterrupt(digitalPinToInterrupt(BTN_PIN_5), interrHandler5, FALLING);
+  attachInterrupt(digitalPinToInterrupt(BTN_PIN_6), interrHandler5, FALLING);
+  attachInterrupt(digitalPinToInterrupt(BTN_PIN_7), interrHandler5, FALLING);
 
   random16_add_entropy( random(10000000) );
 
@@ -107,16 +112,14 @@ void handleNotFound(){
   server.send_P(200, "text/html; charset=utf-8", redirecthtml);
 }
 
-volatile bool btnPressed1 = false;
-volatile bool btnPressed2 = false;
-volatile bool btnPressed3 = false;
-volatile bool btnPressed4 = false;
-volatile bool btnPressed5 = false;
-void interrHandler1() { btnPressed1 = true; }
-void interrHandler2() { btnPressed2 = true; }
-void interrHandler3() { btnPressed3 = true; }
-void interrHandler4() { btnPressed4 = true; }
-void interrHandler5() { btnPressed5 = true; }
+volatile bool btnPressedAr[8] = {false};
+void interrHandler1() { btnPressedAr[1] = true; }
+void interrHandler2() { btnPressedAr[2] = true; }
+void interrHandler3() { btnPressedAr[3] = true; }
+void interrHandler4() { btnPressedAr[4] = true; }
+void interrHandler5() { btnPressedAr[5] = true; }
+void interrHandler6() { btnPressedAr[6] = true; }
+void interrHandler7() { btnPressedAr[7] = true; }
 
 unsigned long lastFrame = 0;
 
@@ -224,16 +227,16 @@ void serviceDraw() {
       leds[getPoint(pgm_read_byte_near(connect4RedX+i), pgm_read_byte_near(connect4RedY+i))] = CRGB::Red;
     for (byte i=0; i<6; i++)
       leds[getPoint(pgm_read_byte_near(connect4BlueX+i), pgm_read_byte_near(connect4BlueY+i))] = CRGB::Blue;
-    if (btnPressed(3) || tiltPressed(true, 3, true)) {
+    if (btnPressed(true, 3) || tiltPressed(true, 3, true)) {
       FastLED.clear();
       gameChoosen = 10;
       state = 220;
     }
-    if (btnPressed(1) || tiltPressed(true, 1, true)) {
+    if (btnPressed(true, 1) || tiltPressed(true, 1, true)) {
       FastLED.clear();
       state = 211;
     }
-    if (btnPressed(2) || tiltPressed(true, 2, true)) {
+    if (btnPressed(true, 2) || tiltPressed(true, 2, true)) {
       FastLED.clear();
       state = 211;
     }
@@ -243,16 +246,16 @@ void serviceDraw() {
       leds[getPoint(pgm_read_byte_near(tttRedX+i), pgm_read_byte_near(tttRedY+i))] = CRGB::Red;
     for (byte i=0; i<5; i++)
       leds[getPoint(pgm_read_byte_near(tttGreenX+i), pgm_read_byte_near(tttGreenY+i))] = CRGB::Green;
-    if (btnPressed(3) || tiltPressed(true, 3, true)) {
+    if (btnPressed(true, 3) || tiltPressed(true, 3, true)) {
       FastLED.clear();
       gameChoosen = 21;
       state = 220;
     }
-    if (btnPressed(1) || tiltPressed(true, 1, true)){
+    if (btnPressed(true, 1) || tiltPressed(true, 1, true)){
       FastLED.clear();
       state = 210;
     }
-    if (btnPressed(2) || tiltPressed(true, 2, true)) {
+    if (btnPressed(true, 2) || tiltPressed(true, 2, true)) {
       FastLED.clear();
       state = 210;
     }
@@ -266,15 +269,15 @@ void serviceDraw() {
       leds[getPoint(pgm_read_byte_near(humanBlueX+i), pgm_read_byte_near(humanBlueY+i))] = CRGB::Blue;
     for (byte i=0; i<6; i++)
       leds[getPoint(pgm_read_byte_near(humanBrownX+i), pgm_read_byte_near(humanBrownY+i))] = CRGB::Brown;
-    if (btnPressed(1) || tiltPressed(true, 1, true)) {
+    if (btnPressed(true, 1) || tiltPressed(true, 1, true)) {
       FastLED.clear();
       state = 221;
     }
-    if (btnPressed(2) || tiltPressed(true, 2, true)) {
+    if (btnPressed(true, 2) || tiltPressed(true, 2, true)) {
       FastLED.clear();
       state = 221;
     }
-    if (btnPressed(3) || tiltPressed(true, 3, true)) {
+    if (btnPressed(true, 3) || tiltPressed(true, 3, true)) {
       autoMode = false;
       fade(gameChoosen);
     }
@@ -284,15 +287,15 @@ void serviceDraw() {
       leds[getPoint(pgm_read_byte_near(pcGreenX+i), pgm_read_byte_near(pcGreenY+i))] = CRGB::Green;
     for (byte i=0; i<6; i++)
       leds[getPoint(pgm_read_byte_near(pcRedX+i), pgm_read_byte_near(pcRedY+i))] = CRGB::Red;
-    if (btnPressed(1) || tiltPressed(true, 1, true)) {
+    if (btnPressed(true, 1) || tiltPressed(true, 1, true)) {
       FastLED.clear();
       state = 220;
     }
-    if (btnPressed(2) || tiltPressed(true, 2, true)) {
+    if (btnPressed(true, 2) || tiltPressed(true, 2, true)) {
       FastLED.clear();
       state = 220;
     }
-    if (btnPressed(3) || tiltPressed(true, 3, true)) {
+    if (btnPressed(true, 3) || tiltPressed(true, 3, true)) {
       autoMode = true;
       fade(gameChoosen);
     }
@@ -300,7 +303,7 @@ void serviceDraw() {
 
   }
 
-  if (btnPressed(5)) {
+  if (btnPressed(true, 7)) {
     fade(210);
   }
   
@@ -318,49 +321,42 @@ void logo() {
   counter = 0;
 }
 
-unsigned long lastBtnPressed;
-
-boolean btnPressed(byte btn) {
-  if ((millis() - lastBtnPressed) < DEBOUNCE) {
-    resetButtons(true);
-    return false;
+boolean btnPressed(bool player0, byte btn) {
+  if (!player0)
+    btn += 3;
+  if (btnPressedAr[btn]) {
+      btnPressedAr[btn] = false;
+      return true;
   }
-  bool pressed = false;
+  return false;
+}
+
+boolean btnIsPressed(bool player0, byte btn) {
+  if (!player0)
+    btn += 3;
   switch(btn) {
     case 1:
-      if (btnPressed1) {
-        btnPressed1 = false;
-        pressed = true;
-      }
-      break;
+      return digitalRead(BTN_PIN_1);
+    break;
     case 2:
-      if (btnPressed2) {
-        btnPressed2 = false;
-        pressed = true;
-      }
-      break;
+      return digitalRead(BTN_PIN_2);
+    break;
     case 3:
-      if (btnPressed3) {
-        btnPressed3 = false;
-        pressed = true;
-      }
-      break;
+      return digitalRead(BTN_PIN_3);
+    break;
     case 4:
-      if (btnPressed4) {
-        btnPressed4 = false;
-        pressed = true;
-      }
-      break;
+      return digitalRead(BTN_PIN_4);
+    break;
     case 5:
-      if (btnPressed5) {
-        btnPressed5 = false;
-        pressed = true;
-      }
-      break;
+      return digitalRead(BTN_PIN_5);
+    break;
+    case 6:
+      return digitalRead(BTN_PIN_6);
+    break;
+    case 7:
+      return digitalRead(BTN_PIN_7);
+    break;
   }
-  if (pressed)
-    lastBtnPressed = millis();
-  return pressed;
 }
 
 boolean tiltPressed(bool player0, byte side, boolean first) {
@@ -399,11 +395,9 @@ boolean tiltPressed(bool player0, byte side, boolean first) {
 }
 
 void resetButtons(bool debounce) {
-  btnPressed1 = false;
-  btnPressed2 = false;
-  btnPressed3 = false;
-  btnPressed4 = false;
-  btnPressed5 = false;
+  for (int i=1; i<=7; i++) {
+    btnPressed7 = false;
+  }
   if (!debounce) {
     wsPress0 = false;
     wsPress1 = false;
