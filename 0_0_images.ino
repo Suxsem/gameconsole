@@ -24,3 +24,10 @@ const PROGMEM byte pcGreenX[] = {0,1,2,3,4,5,6,7,0,1,2,3,4,5,6,7,0,0,0,7,7,7};
 const PROGMEM byte pcGreenY[] = {1,1,1,1,1,1,1,1,5,5,5,5,5,5,5,5,2,3,4,2,3,4};
 const PROGMEM byte pcRedX[] = {3,4,2,3,4,5};
 const PROGMEM byte pcRedY[] = {6,6,7,7,7,7};
+
+const PROGMEM byte pong4GreenX[] = {1,1,1};
+const PROGMEM byte pong4GreenY[] = {4,5,6};
+const PROGMEM byte pong4PinkX[] = {6,6,6};
+const PROGMEM byte pong4PinkY[] = {1,2,3};
+const PROGMEM byte pong4YellowX[] = {2,3,4,5};
+const PROGMEM byte pong4YellowY[] = {5,4,3,2};

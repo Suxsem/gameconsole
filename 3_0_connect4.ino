@@ -33,12 +33,12 @@ void c4Draw() {
     if (autoMode && currentPos == autoTarget && !autoJustFound) {      
       autoTarget = random8(7);
     }
-    if (btnPressed(1) || !digitalRead(BTN_PIN_1) || (tiltTarget < 255 && currentPos > tiltTarget) || (autoMode && currentPos > autoTarget)) {
+    if (btnPressed(player, 1) || btnIsPressed(player, 1) || (tiltTarget < 255 && currentPos > tiltTarget) || (autoMode && currentPos > autoTarget)) {
       if (currentPos > 0)
         currentPos--;      
       blynk = false;
     }
-    if (btnPressed(2) || !digitalRead(BTN_PIN_2) || (tiltTarget < 255 && currentPos < tiltTarget) || (autoMode && currentPos < autoTarget)) {
+    if (btnPressed(player, 2) || btnIsPressed(player, 2) || (tiltTarget < 255 && currentPos < tiltTarget) || (autoMode && currentPos < autoTarget)) {
       if (currentPos < 6)
         currentPos++;
       blynk = false;
@@ -49,7 +49,7 @@ void c4Draw() {
     } else {
        autoJustFound = false;
     }
-    if (btnPressed(3) || (player == 0 && tiltPressed(true, 3, true)) || (player == 1 && tiltPressed(false, 3, true)) || (autoMode && currentPos == autoTarget && !autoJustFound)) {
+    if (btnPressed(player, 3) || tiltPressed(player, 3, true) || (autoMode && currentPos == autoTarget && !autoJustFound)) {
       if (board[currentPos][0] == 0) {
         state = 1;
         leds[getPoint(currentPos, 0)] = CRGB::Black;
@@ -99,7 +99,7 @@ void c4Draw() {
     }
     blynk = !blynk;
 
-    if (btnPressed(3) || (player == 0 && tiltPressed(true, 3, true)) || (player == 1 && tiltPressed(false, 3, true)) || autoMode) {
+    if (btnPressed(player, 3) || tiltPressed(player, 3, true) || autoMode) {
       fade(10);
     }
     break;

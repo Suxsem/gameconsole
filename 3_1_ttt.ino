@@ -1,9 +1,8 @@
-#define AUTO_FRAME_EVERY 3
-
-byte skipFrames = 0;
 bool forceFirstCell;
 
 void tttInit() {
+  if (autoMode)
+    frame = 320;
   state = 22;
   currentPos = 0;
   player = random8(2) == 0;
@@ -32,9 +31,6 @@ void tttDraw() {
     }
     break;
   case 22: //choose pos
-    if (autoMode && skipFrames++ != AUTO_FRAME_EVERY)    
-      return;
-    skipFrames = 0;
     tiltTarget = 255;
     if (!autoMode) {
       if (player == 0 && wsClt0 < 255)
@@ -46,7 +42,7 @@ void tttDraw() {
     if (autoMode && (autoTarget == 10 || (currentPos == autoTarget && !autoJustFound))) {
       autoTarget = tttRandomFree();
     }
-    if (btnPressed(1) || !digitalRead(BTN_PIN_1) || (tiltTarget < 255 && currentPos > tiltTarget) || (autoMode && !forceFirstCell && currentPos > autoTarget)) {
+    if (btnPressed(player, 1) || btnIsPressed(player, 1) || (tiltTarget < 255 && currentPos > tiltTarget) || (autoMode && !forceFirstCell && currentPos > autoTarget)) {
       for (int8_t i=currentPos-1; i>=0; i--) {
         if (board[i%3][i/3] == 0) {
           currentPos = i;
@@ -55,7 +51,7 @@ void tttDraw() {
       }
       blynk = false;
     }
-    if (btnPressed(2) || !digitalRead(BTN_PIN_2) || (tiltTarget < 255 && currentPos < tiltTarget) || (autoMode && !forceFirstCell && currentPos < autoTarget)) {
+    if (btnPressed(player, 2) || btnIsPressed(player, 2) || (tiltTarget < 255 && currentPos < tiltTarget) || (autoMode && !forceFirstCell && currentPos < autoTarget)) {
       for (byte i=currentPos+1; i<9; i++) {
         if (board[i%3][i/3] == 0) {
           currentPos = i;
@@ -72,7 +68,7 @@ void tttDraw() {
        autoJustFound = false;
     }
     forceFirstCell = false;
-    if (btnPressed(3) || (player == 0 && tiltPressed(true, 3, true)) || (player == 1 && tiltPressed(false, 3, true)) || (autoMode && currentPos == autoTarget && !autoJustFound)) {
+    if (btnPressed(player, 3) || tiltPressed(player, 3, true) || (autoMode && currentPos == autoTarget && !autoJustFound)) {
       tttFillCell(currentPos, player ? CRGB::Red : CRGB::Green);
       board[currentPos % 3][currentPos / 3] = player ? 1 : 2;
       if (tttIsWon()) {
@@ -115,7 +111,7 @@ void tttDraw() {
         tttFillCell(winningCells[i][0], player ? CRGB::Red : CRGB::Green);
     }
     blynk = !blynk;
-    if (btnPressed(3) || (player == 0 && tiltPressed(true, 3, true)) || (player == 1 && tiltPressed(false, 3, true)) || autoMode) {
+    if (btnPressed(player, 3) || tiltPressed(player, 3, true) || autoMode) {
       fade(21);
     }
     break;
