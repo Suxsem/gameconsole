@@ -8,6 +8,7 @@
 
 #define NUM_LEDS 64
 #define DATA_PIN  D8
+#define BLINK_INT 500
 
 //1 LU
 //2 LD
@@ -126,10 +127,11 @@ void interrHandler7() { btnPressedArInt[7] = true; }
 unsigned long lastFrame = 0;
 
 void loop() {
-  webSocket.loop();  
+  webSocket.loop();
   dnsServer.processNextRequest();
   server.handleClient();
   checkDebounce();
+  statusLed();
   if (millis() - lastFrame > frame) {
     draw();
     resetButtons();
@@ -346,6 +348,18 @@ void fade(byte mNextState) {
 void logo() {
   state = 200;
   counter = 0;
+}
+
+unsigned long lastStatusLed;
+void statusLed() {
+  if (wsClt0 < 255 || wsClt1 < 255) {
+    if (millis() - lastStatusLed > BLINK_INT) {
+      lastStatusLed = millis();
+      digitalWrite(LED_PIN, !digitalRead(LED_PIN));
+    }
+  } else {
+    digitalWrite(LED_PIN, HIGH);
+  }
 }
 
 unsigned long lastDebounce;
