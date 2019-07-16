@@ -166,7 +166,7 @@ bool pongNextBall() {
       ballDirection = 7;
     } else {
       continueOrNot = false;
-      player = 1;
+      player = 0;
     }
   }
   // edge top and bottom
