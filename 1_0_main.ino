@@ -91,7 +91,7 @@ void setup() {
   WiFi.softAP("GameConsole", "suxsemgame");
 
   digitalWrite(LED_PIN, HIGH);
-  Serial.begin(9600);
+  Serial.begin(500000);
 
   webSocket.begin();
   webSocket.onEvent(webSocketEvent);
